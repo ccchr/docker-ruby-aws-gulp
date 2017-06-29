@@ -1,16 +1,23 @@
-FROM ruby:2.4.1-alpine
+FROM ruby:2.4.1-slim
 
-RUN apk --no-cache update
 
-RUN apk add --update ruby-dev
+RUN apt-get update \
+    && apt-get install -y \
+    git \
+    curl \
+    python-pip \
+    python-dev
 
-RUN apk add --update build-base libffi-dev
+#Install nodejs
+RUN echo 'Getting the NodeJS 6.x'
 
-RUN apk add --update nodejs
+RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
+RUN apt-get install -y \
+    nodejs
 
-RUN apk add --no-cache python-dev python py-pip py-setuptools ca-certificates groff less
-RUN pip install --upgrade pip
+RUN pip install awscli
 
-RUN pip --no-cache-dir install awscli \
-    && npm install -g yarn gulp \
+RUN gem install jekyll bundler --no-rdoc --no-ri
+
+RUN npm install -g yarn gulp \
     && rm -rf /var/cache/apk/*
